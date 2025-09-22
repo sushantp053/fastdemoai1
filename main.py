@@ -1,7 +1,7 @@
 from sqlmodel import Field, Session, SQLModel, select
 from fastapi import FastAPI
 from database import create_db_and_tables, get_session
-from model import User, Product
+from model import User, Product, LoginUser, Category
 
 app = FastAPI()
 
@@ -34,4 +34,59 @@ def read_user(user_id: int):
         if user:
             return user
         return {"error": "User not found"}
+
+@app.post("/login")
+def login(user: LoginUser):
+    with next(get_session()) as session:
+        user = session.exec(select(User).where(User.email == user.email and User.password == user.password)).first()
+        if user:
+            return {"message": "Login successful"}
+        return {"error": "Invalid email or password"}
+    
+@app.get("/login")
+def login_user(userId: int, password: str):
+    with next(get_session()) as session:
+        user = session.exec(select(User).where(User.id == userId and User.password == password)).first() # select * from user where id = userId and password = password
+        if user:
+            return {"message": "Login successful"}
+        return {"error": "Invalid email or password"}   
+    
+@app.post("/loginUser")
+def login_user(userId: int, password: str):
+    with next(get_session()) as session:
+        user = session.exec(select(User).where(User.id == userId and User.password == password)).first() # select * from user where id = userId and password = password
+        if user:
+            return {"message": "Login successful"}
+        return {"error": "Invalid email or password"}
+    
+@app.post("/category")
+def create_category(category: Category):
+    with next(get_session()) as session:
+        session.add(category)
+        session.commit()
+        session.refresh(category)
+        return category
+
+@app.post("/product/")
+def create_product(product: Product):
+    with next(get_session()) as session:
+        session.add(product)
+        session.commit()
+        session.refresh(product)
+        return product
+    
+@app.get("/products/")
+def read_products():
+    with next(get_session()) as session:
+        products = session.exec(select(Product)).all()
+        return products
+
+@app.get("/product/{product_id}")
+def read_product(product_id: int):
+    with next(get_session()) as session:
+        product = session.exec(select(Product).where(Product.id == product_id)).first()
+        if product:
+            return product
+        return {"error": "Product not found"}
+    
 
