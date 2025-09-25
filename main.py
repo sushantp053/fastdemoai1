@@ -66,6 +66,12 @@ def create_category(category: Category):
         session.commit()
         session.refresh(category)
         return category
+    
+@app.get("/categories/")
+def read_categories():
+    with next(get_session()) as session:
+        categories = session.exec(select(Category)).all()
+        return categories
 
 @app.post("/product/")
 def create_product(product: Product):
@@ -144,3 +150,4 @@ def update_product(product_id: int, updated_product: Product):
             session.commit()
             return {"message": "Product updated successfully"}
         return {"error": "Product not found"}
+    
