@@ -49,3 +49,11 @@ class Stock(SQLModel, table=True):
     created_at: str = Field(default=None)
 
 
+class Address(SQLModel, table=True):
+    id: int | None = Field(default=None, primary_key=True)
+    user_id: int = Field(foreign_key="user.id")
+    street: str
+    city: str
+    state: str
+    zip_code: str
+    country: str

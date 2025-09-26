@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import const
 
 st.subheader("Add New Category")
 
@@ -19,7 +20,7 @@ with st.form("category_form"):
                 "updated_at": "demo",
                 "created_at": "demo"
             }
-            response = requests.post("http://localhost:8000/category", json=category_data)
+            response = requests.post(f"{const.api_base_url}/category", json=category_data)
 
             if response.status_code == 200:
                 st.success("Category created successfully!")
